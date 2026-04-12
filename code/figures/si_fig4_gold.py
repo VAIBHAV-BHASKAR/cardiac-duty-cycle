@@ -39,7 +39,12 @@ def plot(log=print):
         ax.set_xlabel("$\\Delta$CDC", fontsize=9)
         ax.set_ylabel("Density", fontsize=9)
         ax.set_title(title, fontsize=9, fontweight="bold")
-        ax.legend(fontsize=6)
+        ax.legend(fontsize=6, loc="upper right")
         ax.tick_params(labelsize=8)
+        # Place p-value text at mid-right (matches MATLAB position)
+        if ax_idx == 1:
+            ax.text(0.97, 0.5, "$\\it{p}$ = n.s. (K-W)",
+                    transform=ax.transAxes, fontsize=6, ha="right",
+                    va="center", color="#555")
 
     save_fig(fig, "SI_Fig4_gold_standard", log=log)
