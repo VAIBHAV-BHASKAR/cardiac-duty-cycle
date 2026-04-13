@@ -90,6 +90,9 @@ def load_beats(filename):
     for col in ("r_sample", "t_end_sample", "next_r_sample", "fs", "age", "beat_idx"):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
+    # PTB-XL encodes ages >= 90 as 300; recode to 90 (matches manuscript Methods)
+    if "age" in df.columns:
+        df.loc[df["age"] >= 300, "age"] = 90
     return df
 
 

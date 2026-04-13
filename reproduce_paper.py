@@ -67,37 +67,14 @@ def log(msg):
 # ---------------------------------------------------------------------------
 
 def _build_pooled_for_figures(pooled):
-    """Tag pooled subjects with 'hgroup' for figure plotting."""
-    import pandas as pd
-    from code.data_loader import load_beats, apply_quality_filters, subject_level_aggregate
+    """Tag pooled subjects with 'hgroup' for figure plotting.
 
-    all_subj = []
-
-    # Healthy control datasets
-    for fname, keep_grp in [
-        ("ludb_beats.csv", "healthy"),
-        ("qtdb_beats.csv", "healthy"),
-        ("ptb_beats.csv", "healthy"),
-        ("fantasia_beats.csv", None),
-        ("autonomic_aging_beats.csv", None),
-    ]:
-        df = apply_quality_filters(load_beats(fname), verbose=False)
-        s = subject_level_aggregate(df)
-        if keep_grp:
-            s = s[s["group"] == keep_grp]
-        s["hgroup"] = "HealthyControl"
-        all_subj.append(s)
-
-    # PTB-XL: split healthy → CN, pathological
-    df = apply_quality_filters(load_beats("ptbxl_beats.csv"), verbose=False)
-    s = subject_level_aggregate(df)
-    sh = s[s["group"] == "healthy"].copy()
-    sh["hgroup"] = "ClinicallyNormal"
-    sp = s[s["group"] == "pathological"].copy()
-    sp["hgroup"] = "Pathological"
-    all_subj.extend([sh, sp])
-
-    pooled_fig = pd.concat(all_subj, ignore_index=True)
+    Uses the same 5-database pool from the hierarchical analysis.
+    Mapping: clinical_group -> hgroup (identical names, just renamed
+    column for backward compat with figure scripts).
+    """
+    pooled_fig = pooled.copy()
+    pooled_fig["hgroup"] = pooled_fig["clinical_group"]
     pooled_fig = pooled_fig.dropna(subset=["age"])
     pooled_fig = pooled_fig[pooled_fig["age"] < 120]
     return pooled_fig

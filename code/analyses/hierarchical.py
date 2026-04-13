@@ -1,4 +1,9 @@
-"""Analysis 3: Hierarchical linear model — all databases pooled."""
+"""Analysis 3: Hierarchical linear model — 5-database pool.
+
+Pools LUDB, Fantasia, Autonomic Aging, PTB, and PTB-XL.
+Excludes QTDB (no age/sex metadata) and CODE-15% (separate mortality
+analysis).  Matches the manuscript's primary hierarchical model.
+"""
 
 import pandas as pd
 from scipy import stats
@@ -8,31 +13,38 @@ from ..config import ONE_OVER_E, RESULTS_DIR
 
 
 def _map_clinical_group(row):
-    """Map (source_database, group) → hierarchical clinical group."""
+    """Map (source_database, group) -> hierarchical clinical group.
+
+    Manuscript definitions:
+      HealthyControl  = verified volunteers: LUDB healthy, Fantasia, AA
+      ClinicallyNormal = hospital patients, normal ECG: PTB healthy, PTB-XL healthy
+      Pathological     = confirmed pathology: LUDB pathological, PTB pathological,
+                         PTB-XL pathological
+    """
     db = row["source_database"]
     g = row["group"]
-    if db in ("LUDB", "PTB", "PTB Diagnostic"):
-        return "HealthyControl" if g == "healthy" else "Pathological"
-    if db in ("Fantasia", "Autonomic Aging", "AutonomicAging"):
+    # Verified healthy volunteer databases
+    if db in ("Fantasia", "Autonomic Aging", "AutonomicAging", "Autonomic_Aging"):
         return "HealthyControl"
+    if db in ("LUDB",):
+        return "HealthyControl" if g == "healthy" else "Pathological"
+    # PTB: healthy = verified volunteers → HealthyControl (per manuscript)
+    if db in ("PTB", "PTB Diagnostic", "PTBDB"):
+        return "HealthyControl" if g == "healthy" else "Pathological"
+    # PTB-XL: healthy = clinically normal hospital patients
     if db in ("PTB-XL", "PTBXL"):
-        return "ClinicallyNormal" if g == "healthy" else "Pathological"
-    if db in ("CODE-15%", "CODE15", "CODE-15"):
-        return "ClinicallyNormal" if g == "healthy" else "Pathological"
-    if db == "QTDB":
         return "ClinicallyNormal" if g == "healthy" else "Pathological"
     return "Pathological"
 
 
 def run(log=print):
+    # 5 databases only — matches manuscript
     datasets = [
         ("ludb_beats.csv", "LUDB"),
-        ("qtdb_beats.csv", "QTDB"),
         ("ptb_beats.csv", "PTB"),
         ("ptbxl_beats.csv", "PTB-XL"),
         ("fantasia_beats.csv", "Fantasia"),
         ("autonomic_aging_beats.csv", "AA"),
-        ("code15_beats.csv", "CODE15"),
     ]
 
     all_subjects = []
