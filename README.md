@@ -140,4 +140,4 @@ If you use this code, please cite both the paper and the data:
 
 ## Author
 
-Vaibhav Bhaskar — KIIT University
+Vaibhav Bhaskar — KIIT University / OIST
