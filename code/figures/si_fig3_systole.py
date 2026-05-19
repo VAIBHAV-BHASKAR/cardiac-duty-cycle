@@ -1,24 +1,30 @@
-"""SI Figure 2: Systole & RR interval across the lifespan."""
+"""SI Figure 3 (v1.3): Systole & RR interval across the lifespan.
+
+(Was SI Fig 2 in manuscript v1.0; renumbered to SI Fig 3 in v1.3.)
+"""
 
 import numpy as np
 from scipy import stats
 
-from ..config import C_HC, C_CN, C_PATH
+from ..config import C_HC, C_NPE, C_PE
 from ._helpers import save_fig, new_figure
 
+# v1.3 group taxonomy
 GROUPS = [
-    ("HealthyControl", C_HC, "Healthy control"),
-    ("ClinicallyNormal", C_CN, "Clinically normal"),
-    ("Pathological", C_PATH, "Pathological"),
+    ("HC",  C_HC,  "Healthy controls"),
+    ("NPE", C_NPE, "Patients (non-pathological ECG)"),
+    ("PE",  C_PE,  "Patients (pathological ECG findings)"),
 ]
 
 
 def plot(pooled, log=print):
-    log("  Plotting SI Fig 2 — Systole & RR across lifespan...")
+    log("  Plotting SI Fig 3 — Systole & RR across lifespan...")
     fig, axes = new_figure(1, 2, figsize=(7.2, 3.5))
 
+    # v1.3 SI Fig 3 caption: "Mechanical systole duration (ms, R-peak to T-end)"
+    # (Main-text Results dropped the "Mechanical" qualifier; SI caption kept it.)
     for panel_idx, (y_col, y_label, title) in enumerate([
-        ("RT_ms", "Mechanical systole (ms)", "(a) Systole duration"),
+        ("RT_ms", "Mechanical systole duration (ms)", "(a) Systole duration"),
         ("RR_ms", "RR interval (ms)", "(b) RR interval"),
     ]):
         ax = axes[panel_idx]
@@ -36,4 +42,4 @@ def plot(pooled, log=print):
         ax.legend(fontsize=6, loc="upper right" if panel_idx == 0 else "best")
         ax.tick_params(labelsize=8)
 
-    save_fig(fig, "SI_Fig2_systole_RR", log=log)
+    save_fig(fig, "SI_Fig3_systole_RR", log=log)

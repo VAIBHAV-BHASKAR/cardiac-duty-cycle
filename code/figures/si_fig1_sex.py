@@ -1,6 +1,8 @@
-"""SI Figure 8: Sex-stratified CDC aging.
+"""SI Figure 1 (v1.3): Sex-stratified CDC aging.
 
-Matches MATLAB plot_SI_Fig8.m: taller figure (18 cm), manual panel
+(Was SI Fig 8 in manuscript v1.0; renumbered to SI Fig 1 in v1.3.)
+
+Matches MATLAB plot_SI_Fig1.m: taller figure (18 cm), manual panel
 positions, larger fonts, legend boxes on, slope annotations repositioned.
 """
 
@@ -10,13 +12,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from scipy import stats
 
-from ..config import C_HC, C_CN, C_PATH
+from ..config import C_HC, C_NPE, C_PE
 from ._helpers import save_fig
 
+# v1.3 group taxonomy
 GROUPS = [
-    ("HealthyControl", C_HC, "HC"),
-    ("ClinicallyNormal", C_CN, "CN"),
-    ("Pathological", C_PATH, "Path"),
+    ("HC",  C_HC,  "HC"),
+    ("NPE", C_NPE, "NPE"),
+    ("PE",  C_PE,  "PE"),
 ]
 
 _AX = 10
@@ -31,7 +34,7 @@ _LEG_FRAME = dict(facecolor="white", edgecolor=(0.7, 0.7, 0.7))
 
 
 def plot(pooled, log=print):
-    log("  Plotting SI Fig 8 — Sex-stratified CDC aging...")
+    log("  Plotting SI Fig 1 — Sex-stratified CDC aging...")
 
     pooled = pooled.copy()
     pooled["sex_clean"] = pooled["sex"].astype(str).str.upper().str.strip()
@@ -80,7 +83,7 @@ def plot(pooled, log=print):
         leg.get_frame().set(**_LEG_FRAME)
         ax.tick_params(labelsize=_TICK)
 
-        # Row 1: Diastole vs Age
+        # Row 1: Diastolic duration vs Age
         ax = fig.add_axes(positions[2 + col_idx])
         for grp, color, label in GROUPS:
             g = sex_data[sex_data["hgroup"] == grp].dropna(
@@ -99,10 +102,10 @@ def plot(pooled, log=print):
         ax.set_title(f"{panel_labels[2 + col_idx]} Diastole — {sex}",
                      fontsize=_TITLE, fontweight="bold", loc="left")
         ax.set_xlabel("Age (years)", fontsize=_AX)
-        ax.set_ylabel("Diastole (ms)", fontsize=_AX)
+        ax.set_ylabel("Diastolic duration (ms)", fontsize=_AX)
         ax.set_xlim(0, 105)
         leg = ax.legend(fontsize=_LEG, loc="upper right")
         leg.get_frame().set(**_LEG_FRAME)
         ax.tick_params(labelsize=_TICK)
 
-    save_fig(fig, "SI_Fig8_sex_stratified", log=log)
+    save_fig(fig, "SI_Fig1_sex_stratified", log=log)

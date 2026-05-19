@@ -1,6 +1,8 @@
-"""SI Figure 7: Kaplan-Meier survival curves.
+"""SI Figure 4 (v1.3): Kaplan-Meier survival curves.
 
-Matches MATLAB plot_SI_Fig7.m: taller figure, manual panel positions,
+(Was SI Fig 7 in manuscript v1.0; renumbered to SI Fig 4 in v1.3.)
+
+Matches MATLAB plot_SI_Fig4.m: taller figure, manual panel positions,
 larger fonts, wider y-range, legend boxes on, KM line width 2.0.
 """
 
@@ -51,7 +53,7 @@ def _format_comma(n):
 
 
 def plot(merged, log=print):
-    log("  Plotting SI Fig 7 — Kaplan-Meier survival...")
+    log("  Plotting SI Fig 4 — Kaplan-Meier survival...")
 
     merged = merged.copy()
     merged["cdc_dev"] = np.abs(merged["CDC_median"] - ONE_OVER_E)
@@ -80,7 +82,6 @@ def plot(merged, log=print):
     for ax_idx, (sex_label, data) in enumerate(sex_groups):
         ax = fig.add_axes(positions[ax_idx])
 
-        n_deaths_total = int(data["death"].sum())
         for tert, color in [("Near 1/e", C_T1), ("Moderate", C_T2),
                              ("Far from 1/e", C_T3)]:
             t = data[data["tertile"] == tert]
@@ -105,4 +106,4 @@ def plot(merged, log=print):
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
 
-    save_fig(fig, "SI_Fig7_KM_survival", log=log)
+    save_fig(fig, "SI_Fig4_KM_survival", log=log)

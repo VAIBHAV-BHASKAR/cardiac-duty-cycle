@@ -1,6 +1,8 @@
-"""SI Figure 1: CDC vs heart rate + hidden mortality risk.
+"""SI Figure 2 (v1.3): CDC vs heart rate + hidden mortality risk.
 
-Matches MATLAB plot_SI_Fig1.m: title updated to "4 databases", HR rounded.
+(Was SI Fig 1 in manuscript v1.0; renumbered to SI Fig 2 in v1.3.)
+
+Matches MATLAB plot_SI_Fig2.m: title updated to "4 databases", HR rounded.
 """
 
 import numpy as np
@@ -12,12 +14,12 @@ from ._helpers import save_fig, new_figure
 
 
 def plot(pooled, merged, log=print):
-    log("  Plotting SI Fig 1 — CDC vs HR...")
+    log("  Plotting SI Fig 2 — CDC vs HR...")
     fig, axes = new_figure(1, 2, figsize=(7.2, 3.5))
 
     # Panel a: Healthy CDC-HR regression
     ax = axes[0]
-    healthy = pooled[pooled["hgroup"] == "HealthyControl"].dropna(
+    healthy = pooled[pooled["hgroup"] == "HC"].dropna(
         subset=["HR_median", "CDC_median"])
     ax.scatter(healthy["CDC_median"], healthy["HR_median"], s=2, alpha=0.15,
                color=C_HC, rasterized=True)
@@ -43,14 +45,14 @@ def plot(pooled, merged, log=print):
             fontsize=7, color="#555")
     ax.tick_params(labelsize=8)
 
-    # Panel b: Hidden risk in CN by HR stratum
+    # Panel b: Hidden risk in NPE by HR stratum  (was "CN" in v1.0)
     ax = axes[1]
-    cn = merged[merged["group"] == "healthy"].copy()
-    cn["HR_bin"] = pd.cut(cn["HR_median"], bins=np.arange(40, 110, 10))
+    npe = merged[merged["group"] == "healthy"].copy()
+    npe["HR_bin"] = pd.cut(npe["HR_median"], bins=np.arange(40, 110, 10))
 
     bar_data = []
-    for hr_bin in sorted(cn["HR_bin"].dropna().unique()):
-        d = cn[cn["HR_bin"] == hr_bin]
+    for hr_bin in sorted(npe["HR_bin"].dropna().unique()):
+        d = npe[npe["HR_bin"] == hr_bin]
         if len(d) < 100:
             continue
         cuts = d["CDC_dev"].quantile([1 / 3, 2 / 3]).values
@@ -91,11 +93,11 @@ def plot(pooled, merged, log=print):
 
     ax.set_xlabel("Heart rate stratum (bpm)", fontsize=9)
     ax.set_ylabel("All-cause mortality (%)", fontsize=9)
-    ax.set_title("(b) CDC risk beyond HR screening", fontsize=9,
+    ax.set_title("(b) CDC risk beyond HR screening (NPE)", fontsize=9,
                  fontweight="bold", loc="left")
     ax.legend(fontsize=6)
     ax.tick_params(labelsize=8)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
-    save_fig(fig, "SI_Fig1_CDC_vs_HR", log=log)
+    save_fig(fig, "SI_Fig2_CDC_vs_HR", log=log)

@@ -1,7 +1,12 @@
-"""SI Figure 6: CODE-15% distributions + age trends.
+"""SI Figure 8 (v1.3): CODE-15% distributions and age trends.
 
-Matches MATLAB plot_SI_Fig6.m: manual panel positions, larger fonts,
-legend boxes on, age range in title, italic p-value.
+(Was SI Fig 6 in manuscript v1.0; renumbered to SI Fig 8 in v1.3.)
+
+Note on group naming: in CODE-15% the 'healthy' group corresponds to the
+manuscript's "Patients (non-pathological ECG)" — these are tele-ECG
+referrals classified as normal_ecg, NOT screened healthy controls. We
+keep the 'Normal ECG' / 'Pathological' figure labels as in the original
+SI Fig 6 since the panel is itself documenting the CODE-15% specifically.
 """
 
 import numpy as np
@@ -11,7 +16,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.stats import gaussian_kde
 
-from ..config import C_CN, C_PATH
+from ..config import C_NPE, C_PE
 from ..data_loader import bootstrap_mode
 from ._helpers import save_fig
 
@@ -27,7 +32,7 @@ _LEG_FRAME = dict(facecolor="white", edgecolor=(0.7, 0.7, 0.7))
 
 
 def plot(code15_subj, log=print):
-    log("  Plotting SI Fig 6 — CODE-15% distributions...")
+    log("  Plotting SI Fig 8 — CODE-15% distributions...")
     fig = plt.figure(figsize=(7.2, 5.5))
 
     ax_dist = fig.add_axes([0.09, 0.57, 0.86, 0.37])
@@ -40,14 +45,14 @@ def plot(code15_subj, log=print):
     cn_mode,   cn_ci   = bootstrap_mode(cn["CDC_median"].values)
     path_mode, path_ci = bootstrap_mode(path["CDC_median"].values)
 
-    ax_dist.hist(cn["DCDC"].values, bins=80, alpha=0.45, color=C_CN,
+    ax_dist.hist(cn["DCDC"].values, bins=80, alpha=0.45, color=C_NPE,
                  density=True,
                  label=f"Normal ECG (N={len(cn):,}, mode={cn_mode:.3f})")
-    ax_dist.hist(path["DCDC"].values, bins=80, alpha=0.45, color=C_PATH,
+    ax_dist.hist(path["DCDC"].values, bins=80, alpha=0.45, color=C_PE,
                  density=True,
                  label=f"Pathological (N={len(path):,}, mode={path_mode:.3f})")
 
-    for grp_data, color in [(cn, C_CN), (path, C_PATH)]:
+    for grp_data, color in [(cn, C_NPE), (path, C_PE)]:
         kde = gaussian_kde(grp_data["DCDC"].values)
         x = np.linspace(-0.15, 0.22, 300)
         ax_dist.plot(x, kde(x), color=color, linewidth=_LW)
@@ -57,13 +62,12 @@ def plot(code15_subj, log=print):
     ax_dist.set_xlabel("$\\Delta$CDC", fontsize=_AX)
     ax_dist.set_ylabel("Density", fontsize=_AX)
     ax_dist.set_title(
-        "(a) CODE-15%: Clinically Normal vs Pathological (ages 17\u2013100)",
+        "(a) CODE-15%: ECG-normal vs Pathological (ages 17–100)",
         fontsize=_TITLE, fontweight="bold", loc="left")
     leg = ax_dist.legend(fontsize=_LEG)
     leg.get_frame().set(**_LEG_FRAME)
     ax_dist.set_xlim(-0.15, 0.22)
     ax_dist.tick_params(labelsize=_TICK)
-    # italic p-value annotation
     xlims = ax_dist.get_xlim()
     ylims = ax_dist.get_ylim()
     ax_dist.text(xlims[1] - 0.01 * (xlims[1] - xlims[0]),
@@ -71,8 +75,8 @@ def plot(code15_subj, log=print):
                  "$\\it{p}$ < 0.001", fontsize=_ANN, ha="right")
 
     # Panel b: CDC vs Age
-    for grp, color, label in [(cn, C_CN, "Normal"),
-                               (path, C_PATH, "Pathological")]:
+    for grp, color, label in [(cn, C_NPE, "Normal"),
+                               (path, C_PE, "Pathological")]:
         g = grp.dropna(subset=["age"])
         g_plot = g.sample(min(5000, len(g)), random_state=42)
         ax_age.scatter(g_plot["age"], g_plot["DCDC"], s=0.3, alpha=0.05,
@@ -92,8 +96,8 @@ def plot(code15_subj, log=print):
     ax_age.tick_params(labelsize=_TICK)
 
     # Panel c: RR vs Age
-    for grp, color, label in [(cn, C_CN, "Normal"),
-                               (path, C_PATH, "Pathological")]:
+    for grp, color, label in [(cn, C_NPE, "Normal"),
+                               (path, C_PE, "Pathological")]:
         g = grp.dropna(subset=["age"])
         g_plot = g.sample(min(5000, len(g)), random_state=42)
         ax_rr.scatter(g_plot["age"], g_plot["RR_ms"], s=0.3, alpha=0.05,
@@ -111,4 +115,4 @@ def plot(code15_subj, log=print):
     leg.get_frame().set(**_LEG_FRAME)
     ax_rr.tick_params(labelsize=_TICK)
 
-    save_fig(fig, "SI_Fig6_code15", log=log)
+    save_fig(fig, "SI_Fig8_code15", log=log)

@@ -1,13 +1,15 @@
-"""SI Figure 5: Large-scale CDC distributions (4 databases).
+"""SI Figure 7 (v1.3): Large-scale CDC distributions (4 databases).
 
-Matches MATLAB plot_SI_Fig5.m: legend boxes on, annotation text wrapped to
-two lines, panel titles show age range, explicit axes ordering.
+(Was SI Fig 5 in manuscript v1.0; renumbered to SI Fig 7 in v1.3.)
+
+Note: The PTB-XL panel shows NPE vs PE; the others (Fantasia, AA) show only
+healthy controls. PTB shows healthy vs pathological.
 """
 
 import numpy as np
 from scipy.stats import gaussian_kde
 
-from ..config import C_HC, C_PATH
+from ..config import C_HC, C_NPE, C_PE
 from ..data_loader import (load_beats, apply_quality_filters,
                            subject_level_aggregate, bootstrap_mode)
 from ._helpers import save_fig, new_figure
@@ -16,28 +18,34 @@ _LEG_FRAME = dict(facecolor="white", edgecolor=(0.7, 0.7, 0.7))
 
 
 def plot(log=print):
-    log("  Plotting SI Fig 5 — Large-scale distributions...")
+    log("  Plotting SI Fig 7 — Large-scale distributions...")
     fig, axes = new_figure(2, 2, figsize=(7.2, 6))
     axes_flat = [axes[0][0], axes[0][1], axes[1][0], axes[1][1]]
 
+    # (title, file, annotation, healthy_label, pathological_label, healthy_color)
     datasets = [
         ("Fantasia", "fantasia_beats.csv",
-         "Database R-peaks,\ntangent T-end"),
+         "Database R-peaks,\ntangent T-end",
+         "Healthy controls", "Pathological", C_HC),
         ("Autonomic Aging", "autonomic_aging_beats.csv",
-         "Fully automatic\n(Pan-Tompkins + tangent)"),
-        ("PTB: ages 17\u201387", "ptb_beats.csv",
-         "Manual T-end (5 referees),\nPan-Tompkins R-peak"),
-        ("PTB-XL: ages 2\u201390", "ptbxl_beats.csv",
-         "ECGDeli automatic\n(R-peak + T-end)"),
+         "Fully automatic\n(Pan-Tompkins + tangent)",
+         "Healthy controls", "Pathological", C_HC),
+        ("PTB: ages 17–87", "ptb_beats.csv",
+         "Manual T-end (5 referees),\nPan-Tompkins R-peak",
+         "Healthy controls", "Patients (pathological ECG findings)", C_HC),
+        ("PTB-XL: ages 2–90", "ptbxl_beats.csv",
+         "ECGDeli automatic\n(R-peak + T-end)",
+         "Patients (non-pathological ECG)",
+         "Patients (pathological ECG findings)", C_NPE),
     ]
 
-    for idx, (title, fname, ann_note) in enumerate(datasets):
+    for idx, (title, fname, ann_note, h_label, p_label, h_color) in enumerate(datasets):
         ax = axes_flat[idx]
         df = apply_quality_filters(load_beats(fname), verbose=False)
         subj = subject_level_aggregate(df)
 
-        for grp, color, label in [("healthy", C_HC, "Healthy"),
-                                   ("pathological", C_PATH, "Pathological")]:
+        for grp, color, label in [("healthy", h_color, h_label),
+                                   ("pathological", C_PE, p_label)]:
             g = subj[subj["group"] == grp]
             if len(g) == 0:
                 continue
@@ -64,4 +72,4 @@ def plot(log=print):
         ax.text(0.98, 0.98, ann_note, transform=ax.transAxes, fontsize=5.5,
                 ha="right", va="top", style="italic", color="#666")
 
-    save_fig(fig, "SI_Fig5_large_scale", log=log)
+    save_fig(fig, "SI_Fig7_large_scale", log=log)
