@@ -17,9 +17,9 @@ from ._helpers import save_fig
 
 # v1.3 group taxonomy
 GROUPS = [
-    ("HC",  C_HC,  "HC"),
-    ("NPE", C_NPE, "NPE"),
-    ("PE",  C_PE,  "PE"),
+    ("HC",  C_HC,  "Healthy controls"),
+    ("NPE", C_NPE, "Patients (non-pathological ECG)"),
+    ("PE",  C_PE,  "Patients (pathological ECG findings)"),
 ]
 
 _AX = 10

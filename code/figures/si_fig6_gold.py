@@ -28,7 +28,7 @@ def plot(log=print):
         label_map = {
             "healthy": "Healthy controls",
             "pathological": "Patients (pathological ECG findings)",
-            "sudden_death": "Sudden death",
+            "sudden_death": "Patients (sudden death)",
         }
 
         for grp in ["healthy", "pathological", "sudden_death"]:

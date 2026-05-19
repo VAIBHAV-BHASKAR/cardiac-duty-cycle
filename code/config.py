@@ -66,7 +66,7 @@ ZENODO_RECORD_ID = ZENODO_CONCEPT_ID
 C_HC   = "#2166ac"   # blue    — Healthy Controls (HC)
 C_NPE  = "#4dac26"   # green   — Patients (non-pathological ECG) (NPE)
 C_PE   = "#d6604d"   # red     — Patients (pathological ECG findings) (PE)
-C_SD   = "#b2182b"   # crimson — Sudden Death (QTDB only)
+C_SD   = "#b2182b"   # crimson — Patients (sudden death) (QTDB only)
 C_T1   = "#4dac26"   # green   — Near 1/e
 C_T2   = "#f4a582"   # amber   — Moderate deviation
 C_T3   = "#d6604d"   # red     — Far from 1/e
@@ -80,5 +80,6 @@ GROUP_LABEL_FULL = {
     "HC":  "Healthy controls",
     "NPE": "Patients (non-pathological ECG)",
     "PE":  "Patients (pathological ECG findings)",
+    "SD":  "Patients (sudden death)",
 }
 GROUP_LABEL_SHORT = {"HC": "HC", "NPE": "NPE", "PE": "PE"}
